@@ -1,5 +1,6 @@
 package com.msa4meerkatgram.global.errors;
 
+import com.msa4meerkatgram.global.errors.custom.NotRegisteredException;
 import com.msa4meerkatgram.global.responses.GlobalRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -46,6 +47,18 @@ public class GlobalExceptionHandler {
                                 .map(item -> String.format("%s : 잘못된 값입니다.", item.getObjectName()))
                                 .toList()
                         )
+                        .build()
+        );
+    }
+
+    // NotRegisteredException: 로그인 에러(커스텀 에러)
+    @ExceptionHandler(NotRegisteredException.class)
+    public ResponseEntity<GlobalRes<String>> notRegisteredHandle(NotRegisteredException e) {
+        return ResponseEntity.status(400).body(
+                GlobalRes.<String>builder()
+                        .code("E01")
+                        .message("로그인 에러")
+                        .data(e.getMessage())
                         .build()
         );
     }
