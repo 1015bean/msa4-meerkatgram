@@ -32,7 +32,7 @@
             *
         FROM users
         WHERE
-            id = #{email}
+            email = #{email}
           AND deleted_at IS NULL
     </select>
 

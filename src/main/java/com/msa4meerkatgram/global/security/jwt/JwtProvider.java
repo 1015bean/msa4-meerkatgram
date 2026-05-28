@@ -47,6 +47,7 @@ public class JwtProvider {
     }
 
     // Access Token 생성하는 메소드(위 메소드가 프라이빗이므로 외부서 사용할 수 있도록)
+    // .accessTokenExpiry(): JwtConfig의 @ConfigurationProperties이 생성해준 메소드
     public  String generateAccessToken(User user) {
         return this.generateToken(user, jwtConfig.accessTokenExpiry());
     }
