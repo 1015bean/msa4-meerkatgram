@@ -1,13 +1,18 @@
 package com.msa4meerkatgram.global.security.jwt;
 
 import com.msa4meerkatgram.domain.user.entities.User;
-import io.jsonwebtoken.Jwts;
+import com.msa4meerkatgram.global.errors.custom.InvalidTokenException;
+import com.msa4meerkatgram.global.security.cookie.CookieManager;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
+import java.util.Optional;
 
 // @Component: 커스텀 bean 객체를 만들게 해주는 어노테이션
     // bean: 프레임워크에서 자동으로 인스턴스 생성해서 관리해주는 객체
@@ -18,13 +23,15 @@ public class JwtProvider {
     // secretKey: 토큰의 Signature부분에 사용할 비밀키 객체
     private final JwtConfig jwtConfig;
     private final SecretKey secretKey;
+    private final CookieManager cookieManager;
 
     // 생성자 커스텀
         // Keys.hmacShaKeyFor() : 토큰의 signature 부분의 비밀키를 만드는(암호화하는) 메소드
         // Decoders.BASE64.decode(): 암호화된 부분을 디코딩하는 작업
-    public JwtProvider(JwtConfig jwtConfig) {
+    public JwtProvider(JwtConfig jwtConfig, CookieManager cookieManager) {
         this.jwtConfig = jwtConfig;
         this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.secret()));
+        this.cookieManager = cookieManager;
     }
 
     // JWT형식의 토큰을 생성해주는 메소드
@@ -55,5 +62,34 @@ public class JwtProvider {
     // Refresh Token 생성하는 메소드(위 메소드가 프라이빗이므로 외부서 사용할 수 있도록)
     public  String generateRefreshToken(User user) {
         return this.generateToken(user, jwtConfig.refreshTokenExpiry());
+    }
+
+    // 쿠키에서 리프레시토큰 추출
+    public Optional<String> extractRefreshToken(HttpServletRequest request) {
+        return cookieManager.getCookie(request, jwtConfig.refreshTokenCookieName())
+                .map(Cookie::getValue);
+    }
+
+    // 토큰 검증 및 클레임(토큰에 담긴 유저정보) 추출
+    public Claims extractClaims(String token) {
+        try {
+            return Jwts.parser()  // 토큰 분석하는 해석기 생성
+                    .verifyWith(this.secretKey) // 우리서버 비밀키를 바탕으로 검증하세요
+                    .build()
+                    .parseSignedClaims(token) // 생성한 해석기(parser)로 토큰을 검증하세요
+                    .getPayload(); // 토큰 payload 추출
+        } catch (ExpiredJwtException e) {
+            // 토큰 만료 에러
+            throw  new InvalidTokenException("토큰이 만료되었습니다.");
+        } catch (UnsupportedJwtException e) {
+            // 서명 위조(토큰 조작) 에러
+            throw new InvalidTokenException("서명이 위조된 토큰입니다.");
+        } catch (MalformedJwtException e) {
+            // 토큰 형식 에러
+            throw new InvalidTokenException("토큰 형식이 올바르지 않습니다.");
+        } catch (JwtException | IllegalArgumentException e) {
+            // 토큰 관련 예외(상위 객체) or 파라미터 에러
+            throw new InvalidTokenException("토큰 검증에 실패했습니다.");
+        }
     }
 }

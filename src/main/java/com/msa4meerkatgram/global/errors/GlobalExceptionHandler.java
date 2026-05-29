@@ -1,5 +1,6 @@
 package com.msa4meerkatgram.global.errors;
 
+import com.msa4meerkatgram.global.errors.custom.InvalidTokenException;
 import com.msa4meerkatgram.global.errors.custom.NotRegisteredException;
 import com.msa4meerkatgram.global.responses.GlobalRes;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,30 @@ import java.util.List;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    // NotRegisteredException: 로그인 에러(커스텀 에러)
+    @ExceptionHandler(NotRegisteredException.class)
+    public ResponseEntity<GlobalRes<String>> notRegisteredHandle(NotRegisteredException e) {
+        return ResponseEntity.status(400).body(
+                GlobalRes.<String>builder()
+                        .code("E01")
+                        .message("로그인 에러")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // InvalidTokenException: 토큰 에러(커스텀 에러)
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<GlobalRes<String>> InvalidTokenHandle(NotRegisteredException e) {
+        return ResponseEntity.status(400).body(
+                GlobalRes.<String>builder()
+                        .code("E04")
+                        .message("토큰 이상")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
 
     // MethodArgumentTypeMismatchException: 1개의 요청 파라미터에 에러가 났을 때
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
@@ -51,17 +76,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-    // NotRegisteredException: 로그인 에러(커스텀 에러)
-    @ExceptionHandler(NotRegisteredException.class)
-    public ResponseEntity<GlobalRes<String>> notRegisteredHandle(NotRegisteredException e) {
-        return ResponseEntity.status(400).body(
-                GlobalRes.<String>builder()
-                        .code("E01")
-                        .message("로그인 에러")
-                        .data(e.getMessage())
-                        .build()
-        );
-    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GlobalRes<String>> otherHandle(Exception e) {

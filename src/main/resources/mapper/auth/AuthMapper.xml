@@ -3,14 +3,14 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
+    <!-- resultMap이 필요없는 이유: -->
+    <!--     UPDATE: 자바의 데이터 -> DB 하는 과정 -->
+    <!--     이때 사용하는 것은 #{필드명} -->
 <mapper namespace="com.msa4meerkatgram.domain.auth.mapper.AuthMapper">
     <update
             id="updateRefreshToken"
             parameterType="com.msa4meerkatgram.domain.user.entities.User"
     >
-    -- resultMap이 필요없는 이유:
-        -- UPDATE: 자바의 데이터 -> DB 하는 과정
-        -- 이때 사용하는 것은 #{필드명}
         UPDATE users
         SET
             refresh_token = #{refreshToken}

@@ -18,6 +18,8 @@ public class CookieManager {
     private final JwtConfig jwtConfig;
 
     // Request Header에서 특정 쿠키 획득(Optional 반환)
+    // request:  요청 받은 데이터
+    // name: 찾고자하는 쿠키명
         // Optional 타입:
         // 반환값이 NULL이 될 경우 NullPointException이 일어날 수 있음.
         // Optional타임은 null처리를 해주지 않으면 오류가 나도록 설계됨
@@ -27,7 +29,7 @@ public class CookieManager {
             return Optional.empty();
         }
 
-        // name이 일치하는 쿠키 획득
+        // 찾고자하는 name과 가지고 있는 name이 일치하는 쿠키객체(name:value) 획득
         return Arrays.stream(request.getCookies())
                 .filter(cookie -> cookie.getName().equals(name))
                 .findFirst();

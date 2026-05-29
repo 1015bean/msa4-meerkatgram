@@ -4,6 +4,7 @@ import com.msa4meerkatgram.domain.auth.requests.LoginReq;
 import com.msa4meerkatgram.domain.auth.responses.AuthRes;
 import com.msa4meerkatgram.domain.auth.services.AuthService;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     private final AuthService authService;
 
+    // 로그인 요청
     @PostMapping("/login")
     public ResponseEntity<GlobalRes<AuthRes>> login(
             // @RequestBody: HTTP body에 Json형식 데이터 보내면, 받은 데이터를 데이터 객체(loginReq)에 담아줌
@@ -31,6 +33,23 @@ public class AuthController {
                         .code("00")
                         .message("로그인 완료")
                         .data(authService.login(response, loginReq))
+                        .build()
+        );
+    }
+
+    // 엑세스토큰 재발급
+    // HttpServletResponse: 리퀘스트 정보 담길 변수
+    // HttpServletResponse: 반환할 정보 담을 변수
+    @PostMapping("/reissue-token")
+    public ResponseEntity<GlobalRes<AuthRes>> reissue(
+            HttpServletRequest request
+            ,HttpServletResponse response
+    ) {
+        return ResponseEntity.status(200).body(
+                GlobalRes.<AuthRes>builder()
+                        .code("00")
+                        .message("토큰 재발급 완료")
+                        .data(authService.reissue(request, response))
                         .build()
         );
     }
