@@ -70,6 +70,25 @@ public class JwtProvider {
                 .map(Cookie::getValue);
     }
 
+    /**
+     * 헤더에서 엑세스토큰 추출
+     * @param request 리퀘스트
+     * @return Optional 엑세스 토큰
+     */
+    public Optional<String> extraAccessToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(jwtConfig.headerKey());
+
+        // 토큰명이 bearer로 시작하지 않으면 예외처리
+        // .startsWith: 문자열이 이걸로 시작하는지 비교함
+        if(bearerToken == null || !bearerToken.startsWith(jwtConfig.scheme())) {
+            return Optional.empty();
+        }
+
+        // 토큰이 bearer 형식이므로 .trim(공백제거) 이용
+        // .substring(Index): (인덱스 위치부터)String의 일부분을 잘라내어 새로운 문자열로 반환
+        return Optional.of(bearerToken.substring(jwtConfig.scheme().length()).trim());
+    }
+
     // 토큰 검증 및 클레임(토큰에 담긴 유저정보) 추출
     public Claims extractClaims(String token) {
         try {

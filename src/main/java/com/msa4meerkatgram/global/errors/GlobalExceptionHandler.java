@@ -5,11 +5,13 @@ import com.msa4meerkatgram.global.errors.custom.NotRegisteredException;
 import com.msa4meerkatgram.global.responses.GlobalRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,11 +23,35 @@ public class GlobalExceptionHandler {
     // NotRegisteredException: 로그인 에러(커스텀 에러)
     @ExceptionHandler(NotRegisteredException.class)
     public ResponseEntity<GlobalRes<String>> notRegisteredHandle(NotRegisteredException e) {
-        return ResponseEntity.status(400).body(
+        return ResponseEntity.status(401).body(
                 GlobalRes.<String>builder()
                         .code("E01")
                         .message("로그인 에러")
                         .data(e.getMessage())
+                        .build()
+        );
+    }
+
+    // AuthenticationException: 인증 에러(커스텀 에러)
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<GlobalRes<String>> authenticationHandle(AuthenticationException e) {
+        return ResponseEntity.status(401).body(
+                GlobalRes.<String>builder()
+                        .code("E02")
+                        .message("UNAUTHENTICATED_ERROR")
+                        .data("로그인이 필요한 서비스입니다.")
+                        .build()
+        );
+    }
+
+    // AccessDeniedException: 권한 에러(커스텀 에러)
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<GlobalRes<String>> accessDeniedHandle(AccessDeniedException e) {
+        return ResponseEntity.status(403).body(
+                GlobalRes.<String>builder()
+                        .code("E03")
+                        .message("UNAUTHORIZED_ERROR")
+                        .data("권한이 없습니다.")
                         .build()
         );
     }
