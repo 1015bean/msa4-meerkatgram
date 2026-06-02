@@ -1,12 +1,15 @@
 package com.msa4meerkatgram.domain.post.controllers;
 
+import com.msa4meerkatgram.domain.post.entities.Post;
 import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
 import com.msa4meerkatgram.domain.post.requests.PostIndexRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,5 +43,21 @@ public class PostController {
 
         // 요청DTO 객체와 매핑 잘 됐는지 점검
         // return String.format("page: %d, limit: %d", req.page(), req.limit());
+    }
+
+    // @PathVariable: URL Path의 일부를 {변수}로 서버에서 추출해서 사용
+    @GetMapping("/posts/{id}")
+    public ResponseEntity<GlobalRes<Post>> show(
+            @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
+    ) {
+        Post result = postService.show(id);
+
+        return ResponseEntity.status(200).body(
+                GlobalRes.<Post>builder()
+                        .code("00")
+                        .message("게시글 상세 정상 처리")
+                        .data(result)
+                        .build()
+        );
     }
 }
