@@ -1,8 +1,6 @@
 package com.msa4meerkatgram.global.errors;
 
-import com.msa4meerkatgram.global.errors.custom.DeletedRecordException;
-import com.msa4meerkatgram.global.errors.custom.InvalidTokenException;
-import com.msa4meerkatgram.global.errors.custom.NotRegisteredException;
+import com.msa4meerkatgram.global.errors.custom.*;
 import com.msa4meerkatgram.global.responses.GlobalRes;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -81,6 +79,18 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // InvalidTokenException: 토큰 에러(커스텀 에러)
+    @ExceptionHandler(DuplicatedRecordException.class)
+    public ResponseEntity<GlobalRes<String>> duplicatedRecordHandle(DuplicatedRecordException e) {
+        return ResponseEntity.status(409).body(
+                GlobalRes.<String>builder()
+                        .code("E11")
+                        .message("DUPLICATED_RECORD_ERROR")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
     // MethodArgumentTypeMismatchException: 1개의 요청 파라미터에 에러가 났을 때
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ResponseEntity<GlobalRes<String>> methodArgumentTypeMismatchHandle(MethodArgumentTypeMismatchException e) {
@@ -115,14 +125,28 @@ public class GlobalExceptionHandler {
         );
     }
 
+    // FileManagedException: 파일 업로드 에러(커스텀 에러)
+    @ExceptionHandler(FileManagedException.class)
+    public ResponseEntity<GlobalRes<String>> FileManagedHandle(FileManagedException e) {
+        log.error("파일 업로드 에러: {}\n{}"
+                ,e.getMessage()
+                , Arrays.toString(e.getStackTrace())
+        );
+        return ResponseEntity.status(500).body(
+                GlobalRes.<String>builder()
+                        .code("E40")
+                        .message("파일 업로드 실패")
+                        .data(e.getMessage())
+                        .build()
+        );
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<GlobalRes<String>> otherHandle(Exception e) {
-        log.error(String.format(
-                "시스템 에러: %s\n%s"
+        log.error("시스템 에러: {}\n{}"
                 ,e.getMessage()
                 , Arrays.toString(e.getStackTrace())
-                )
         );
 
         return ResponseEntity.status(500).body(

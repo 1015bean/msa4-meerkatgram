@@ -19,4 +19,27 @@
             id = #{id}
     </update>
 
+    <insert
+            id="create"
+            parameterType="com.msa4meerkatgram.domain.user.entities.User"
+            useGeneratedKeys="true"
+            keyProperty="id"
+    >
+
+        INSERT INTO users(
+            email,
+            password,
+            nick,
+            profile,
+            role,
+            provider
+        ) values  (
+            #{email},
+            #{password},
+            #{nick},
+            #{profile},
+            #{role},
+            #{provider}
+        )
+    </insert>
 </mapper>
