@@ -15,4 +15,5 @@ public interface PostMapper {
 
     long getTotal();
     Post findByPk(long id);
+    long countPostsByUserId(long userId);
 }
