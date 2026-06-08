@@ -2,6 +2,7 @@ package com.msa4meerkatgram.domain.post.services;
 
 import com.msa4meerkatgram.domain.post.entities.Post;
 import com.msa4meerkatgram.domain.post.mapper.PostMapper;
+import com.msa4meerkatgram.domain.post.requests.CreatePostReq;
 import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
 import com.msa4meerkatgram.domain.post.requests.PostIndexRes;
 import com.msa4meerkatgram.global.errors.custom.DeletedRecordException;
@@ -43,5 +44,18 @@ public class PostService {
         }
 
         return post;
+    }
+
+    // 게시글 업로드
+    public Post createPost(CreatePostReq createPostReq, Long id) {
+        Post post = Post.builder()
+                .userId(id)
+                .content(createPostReq.content())
+                .image(createPostReq.image())
+                .build();
+
+        postMapper.insertPost(post);
+
+        return postMapper.findByPk(post.getId());
     }
 }

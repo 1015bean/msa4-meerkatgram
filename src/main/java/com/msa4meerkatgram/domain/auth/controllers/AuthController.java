@@ -38,8 +38,8 @@ public class AuthController {
     }
 
     // 엑세스토큰 재발급
-    // HttpServletResponse: 리퀘스트 정보 담길 변수
-    // HttpServletResponse: 반환할 정보 담을 변수
+    // HttpServletRequest: 리퀘스트 정보 담길 변수
+    // HttpServletResponse: 반환할 정보 담을 변수 - addCookie 메소드 사용하기 위해(토큰 초기화 위해)
     @PostMapping("/reissue-token")
     public ResponseEntity<GlobalRes<AuthRes>> reissue(
             HttpServletRequest request
@@ -54,11 +54,14 @@ public class AuthController {
         );
     }
 
+    // @AuthenticationPrincipal: 시큐리티가 인증된 사용자의 정보(claims)를 컨트롤러 파라미터에 자동으로 주입
+    // JWT필터에서 추출한 claim을 가져와 사용
     @PostMapping("/logout")
     public ResponseEntity<GlobalRes<String>> logout(
             HttpServletResponse response
             , @AuthenticationPrincipal Claims claims
     ) {
+        // Long.parseLong((claims.getSubject())): 시큐리티에서 가지고 있는 claims에서 subject획득, Long타입 변환
         authService.logout(response, Long.parseLong((claims.getSubject())));
 
         return ResponseEntity.status(200).body(

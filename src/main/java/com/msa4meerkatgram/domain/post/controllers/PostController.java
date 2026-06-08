@@ -1,17 +1,18 @@
 package com.msa4meerkatgram.domain.post.controllers;
 
 import com.msa4meerkatgram.domain.post.entities.Post;
+import com.msa4meerkatgram.domain.post.requests.CreatePostReq;
 import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
 import com.msa4meerkatgram.domain.post.requests.PostIndexRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
 
 // posts: 요청받은 게시물 정보(page) 가져와서 보여줌 - 1유저요청 받는 컨트롤러 만들기
 // 메소드(리퀘스트DTO의 형식대로 요청 받음)
@@ -57,6 +58,26 @@ public class PostController {
                         .code("00")
                         .message("게시글 상세 정상 처리")
                         .data(result)
+                        .build()
+        );
+    }
+
+    // 게시글 작성 로직(req데이터 받기&유저정보 획득)
+        // req객체(유효성, JSON으로 받기), 시큐리티:claims
+        // Service 호출(req, userId)
+        // 위의 값 담아서, Post객체로 반환
+    @PostMapping("/posts")
+    public ResponseEntity<GlobalRes<Post>> createPost(
+            @Valid @RequestBody CreatePostReq createPostReq,
+            @AuthenticationPrincipal Claims claims
+    ) {
+        Post post = postService.createPost(createPostReq, Long.parseLong((claims.getSubject())));
+
+        return ResponseEntity.status(200).body(
+                GlobalRes.<Post>builder()
+                        .code("00")
+                        .message("정상 처리")
+                        .data(post)
                         .build()
         );
     }
