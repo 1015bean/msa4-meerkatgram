@@ -1,6 +1,6 @@
 package com.msa4meerkatgram.domain.post.mapper;
 
-import com.msa4meerkatgram.domain.post.entities.Post;
+import com.msa4meerkatgram.domain.post.entities.PostMybatis;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -11,9 +11,9 @@ import java.util.List;
 public interface PostMapper {
     // 데이터 가져오는 메소드
     // 데이터타입: 엔티티 객체(DB에서 받아온 정보 담을 DTO객체)에 데이터 담기
-    List<Post> getPagination(int limit, int offset);
+    List<PostMybatis> getPagination(int limit, int offset);
 
     long getTotal();
-    Post findByPk(long id);
+    PostMybatis findByPk(long id);
     long countPostsByUserId(long userId);
 }
