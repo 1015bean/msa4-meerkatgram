@@ -1,6 +1,6 @@
 package com.msa4meerkatgram.global.security.jwt;
 
-import com.msa4meerkatgram.domain.user.entities.UserMybatis;
+import com.msa4meerkatgram.domain.user.entities.User;
 import com.msa4meerkatgram.global.errors.custom.InvalidTokenException;
 import com.msa4meerkatgram.global.security.cookie.CookieManager;
 import io.jsonwebtoken.*;
@@ -36,7 +36,7 @@ public class JwtProvider {
 
     // JWT형식의 토큰을 생성해주는 메소드
         // ttl:  = Time To Live, 토큰의 유효기간을 밀리초 단위 표시
-    private String generateToken(UserMybatis user, long ttl) {
+    private String generateToken(User user, long ttl) {
         Date now = new Date();
 
         // 리턴해줄 토큰의 형식 커스텀(JWT형식을 바탕으로)
@@ -55,12 +55,12 @@ public class JwtProvider {
 
     // Access Token 생성하는 메소드(위 메소드가 프라이빗이므로 외부서 사용할 수 있도록)
     // .accessTokenExpiry(): JwtConfig의 @ConfigurationProperties이 생성해준 메소드
-    public  String generateAccessToken(UserMybatis user) {
+    public  String generateAccessToken(User user) {
         return this.generateToken(user, jwtConfig.accessTokenExpiry());
     }
 
     // Refresh Token 생성하는 메소드(위 메소드가 프라이빗이므로 외부서 사용할 수 있도록)
-    public  String generateRefreshToken(UserMybatis user) {
+    public  String generateRefreshToken(User user) {
         return this.generateToken(user, jwtConfig.refreshTokenExpiry());
     }
 

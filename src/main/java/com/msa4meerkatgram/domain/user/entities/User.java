@@ -19,7 +19,7 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class) // 엔티티의 이벤트리스너 지정
 @Table(name = "users") // 테이블명 맵핑
 @SQLDelete(sql = "UPDATE users SET deleted_at = NOW() WHERE id = ?") // delete메소드를 커스텀()
-@SQLRestriction("deleted_date IS NULL") // 엔티티의 조회 시 항상 특정 조건을 추가하도록 지정
+@SQLRestriction("deleted_at IS NULL") // 엔티티의 조회 시 항상 특정 조건을 추가하도록 지정
 @Getter
 @Setter
 public class User {
@@ -52,7 +52,7 @@ public class User {
     private String profile;
 
     @Column(name = "refreshToken", nullable = true, length = 255)
-    private LocalDateTime refreshToken;
+    private String refreshToken;
 
     @CreatedDate  // 생성 시 자동으로 시간 입력
     @Column(name = "created_at", nullable = false)

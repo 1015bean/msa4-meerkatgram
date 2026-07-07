@@ -58,7 +58,7 @@ public class GlobalExceptionHandler {
 
     // InvalidTokenException: 토큰 에러(커스텀 에러)
     @ExceptionHandler(InvalidTokenException.class)
-    public ResponseEntity<GlobalRes<String>> InvalidTokenHandle(NotRegisteredException e) {
+    public ResponseEntity<GlobalRes<String>> InvalidTokenHandle(InvalidTokenException e) {
         return ResponseEntity.status(400).body(
                 GlobalRes.<String>builder()
                         .code("E04")

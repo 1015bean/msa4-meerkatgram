@@ -10,6 +10,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDateTime;
+
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "posts")
@@ -24,8 +26,10 @@ public class Post {
     @Column(name = "id", columnDefinition = "BIGINT UNSIGNED")
     private Long id;
 
-    // user_id: User테이블 엔티티를 가져옴
     // @현재 엔티티 수 & 연결할 엔티티 수: 테이블 간 관계(다대일, 다대다, 등등)
+    // (fetch = FetchType. ... ): join하는 데이터 가져올 방식, EAGER or LAZY, 디폴트는 LAZY
+        // EAGER: join된 모든 테이블의 데이터 다 가져옴
+        // LAZY: 본 테이블 데이터만 가져오고 join된 테이블은 필요할 때 가져옴
     @ManyToOne(fetch = FetchType.LAZY)
     // 테이블 끼리 join할 때, join해서 가져올 테이블에 대한 설정
     @JoinColumn(
@@ -44,12 +48,12 @@ public class Post {
 
     @CreatedDate
     @Column(name = "created_at", nullable = false)
-    private String createdAt;
+    private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(name = "updated_at", nullable = false)
-    private String updatedAt;
+    private LocalDateTime updatedAt;
 
     @Column(name = "deleted_at", nullable = true)
-    private String deletedAt;
+    private LocalDateTime deletedAt;
 }
