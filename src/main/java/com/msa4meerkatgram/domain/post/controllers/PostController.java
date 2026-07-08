@@ -1,5 +1,7 @@
 package com.msa4meerkatgram.domain.post.controllers;
 
+import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
+import com.msa4meerkatgram.domain.post.response.PostIndexRes;
 import com.msa4meerkatgram.domain.post.response.PostWithUserRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
 import com.msa4meerkatgram.global.responses.GlobalRes;
@@ -24,24 +26,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
 
-//    @GetMapping("/posts")
-//    public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
-//        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
-//        PostIndexRes postIndexRes = postService.index(postIndexReq);
-//
-//
-//        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
-//        return ResponseEntity.status(200).body(
-//                GlobalRes.<PostIndexRes>builder()
-//                        .code("00")
-//                        .message("정상처리")
-//                        .data(postIndexRes)
-//                        .build()
-//        );
-//
-//        // 요청DTO 객체와 매핑 잘 됐는지 점검
-//        // return String.format("page: %d, limit: %d", req.page(), req.limit());
-//    }
+    @GetMapping("/posts")
+    public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
+        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
+        PostIndexRes postIndexRes = postService.index(postIndexReq);
+
+
+        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
+        return ResponseEntity.status(200).body(
+                GlobalRes.<PostIndexRes>builder()
+                        .code("00")
+                        .message("정상처리")
+                        .data(postIndexRes)
+                        .build()
+        );
+
+        // 요청DTO 객체와 매핑 잘 됐는지 점검
+        // return String.format("page: %d, limit: %d", req.page(), req.limit());
+    }
 
     // @PathVariable: URL Path의 일부를 {변수}로 서버에서 추출해서 사용
     @GetMapping("/posts/{id}")

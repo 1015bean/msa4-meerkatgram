@@ -34,7 +34,7 @@ public class Post {
     // 테이블 끼리 join할 때, join해서 가져올 테이블에 대한 설정
     @JoinColumn(
             name = "user_id"
-            , insertable = true
+            , insertable =  true
             , updatable = false
             , nullable = false
             , foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))  // 물리적fk 설정하고 싶지 않을 때

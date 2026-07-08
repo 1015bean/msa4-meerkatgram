@@ -1,7 +1,7 @@
 package com.msa4meerkatgram.domain.post.response;
 
 import com.msa4meerkatgram.domain.post.entities.Post;
-import com.msa4meerkatgram.domain.user.entities.User;
+import com.msa4meerkatgram.domain.user.responses.UserRes;
 
 import java.time.LocalDateTime;
 
@@ -12,7 +12,7 @@ public record PostWithUserRes(
         , LocalDateTime createAt
         , LocalDateTime updateAt
         , LocalDateTime deleteAt
-        , User user
+        , UserRes userRes
 ) {
     public static PostWithUserRes from(Post post) {
         return new PostWithUserRes(
@@ -22,7 +22,7 @@ public record PostWithUserRes(
                 , post.getCreatedAt()
                 , post.getUpdatedAt()
                 , post.getDeletedAt()
-                , post.getUser()
+                , UserRes.from(post.getUser())
         );
     }
 }
