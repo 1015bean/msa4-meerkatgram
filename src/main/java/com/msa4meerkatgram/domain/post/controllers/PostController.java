@@ -4,7 +4,11 @@ import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
 import com.msa4meerkatgram.domain.post.response.PostIndexRes;
 import com.msa4meerkatgram.domain.post.response.PostWithUserRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
+import com.msa4meerkatgram.global.annotation.openapi.ApiNotValidErrorResponse;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,12 +24,15 @@ import org.springframework.web.bind.annotation.RestController;
     // 세그먼트 파라미터: url의 path를 데이터 변수로 사용. 많은 데이터에는 부적합
     // JSON: 대량의 복잡한 데이터
     // 쿼리 파라미터: URL에 데이터 노출
+@Tag(name = "게시글API", description = "게시글 관련")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class PostController {
     private final PostService postService;
 
+    @ApiResponse(responseCode = "200", description = "게시글 목록 획득 성공")
+    @ApiNotValidErrorResponse
     @GetMapping("/posts")
     public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
         // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
@@ -48,7 +55,7 @@ public class PostController {
     // @PathVariable: URL Path의 일부를 {변수}로 서버에서 추출해서 사용
     @GetMapping("/posts/{id}")
     public ResponseEntity<GlobalRes<PostWithUserRes>> show(
-            @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
+            @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
     ) {
         PostWithUserRes result = postService.show(id);
 
