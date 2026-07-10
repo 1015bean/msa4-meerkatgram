@@ -1,32 +1,23 @@
 package com.msa4meerkatgram.global.annotation.openapi;
 
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-// 커스텀 어노테이션 클레스
-    // @Target(어노테이션 줄 대상의 레벨)
-    // @Retention(어노테이션이 실행될 시점)
-    // @ApiResponse( ... ): 어노테이션 커스텀 내용
-@Target(ElementType.METHOD)
-@Retention(RetentionPolicy.RUNTIME)
-@ApiResponse(
-        responseCode = "400"
-        , description = "유효성 검사 실패"
-        , content = @Content(
-            mediaType = "application/json"
-            , examples = {
-                @ExampleObject(
-                    name = "유효성 검사 실패 에러"
-                    , value = "{\"code\":\"\"E21\",\"message\" : \"Bad Request\"}"
-                )
-            }
-        )
-)
-public @interface ApiNotValidErrorResponse {
-}
+//// 커스텀 어노테이션 클레스
+//    // @Target(어노테이션 줄 대상의 레벨)
+//    // @Retention(어노테이션이 실행될 시점)
+//    // @ApiResponse( ... ): 어노테이션 커스텀 내용
+//@Target(ElementType.METHOD)
+//@Retention(RetentionPolicy.RUNTIME)
+//@ApiResponse(
+//        responseCode = "400"
+//        , description = "유효성 검사 실패"
+//        , content = @Content(
+//            mediaType = "application/json"
+//            , examples = {
+//                @ExampleObject(
+//                    name = "유효성 검사 실패 에러"
+//                    , value = "{\"code\":\"\"E21\",\"message\" : \"Bad Request\"}"
+//                )
+//            }
+//        )
+//)
+//public @interface ApiNotValidErrorResponse {
+//}

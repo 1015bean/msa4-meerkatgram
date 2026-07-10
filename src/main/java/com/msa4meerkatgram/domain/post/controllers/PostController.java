@@ -4,10 +4,11 @@ import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
 import com.msa4meerkatgram.domain.post.response.PostIndexRes;
 import com.msa4meerkatgram.domain.post.response.PostWithUserRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
-import com.msa4meerkatgram.global.annotation.openapi.ApiNotValidErrorResponse;
+import com.msa4meerkatgram.global.config.openapi.CustomApiResponse;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import com.msa4meerkatgram.global.responses.constant.CustomResponseCode;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -31,8 +32,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class PostController {
     private final PostService postService;
 
-    @ApiResponse(responseCode = "200", description = "게시글 목록 획득 성공")
-    @ApiNotValidErrorResponse
+    @Operation(summary = "개사글 목록 출력 가능")
+    @CustomApiResponse(value = {
+            CustomResponseCode.INVALID_PARAMETER_ERROR
+            , CustomResponseCode.DB_ERROR
+            , CustomResponseCode.SYSTEM_ERROR
+    })
     @GetMapping("/posts")
     public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
         return ResponseEntity.ok(GlobalRes.success(postService.index(postIndexReq)));
@@ -54,6 +59,14 @@ public class PostController {
         // return String.format("page: %d, limit: %d", req.page(), req.limit());
     }
 
+    @Operation(summary = "개사글 목록 출력 가능")
+    @CustomApiResponse(value = {
+            CustomResponseCode.UNAUTHENTICATED_ERROR
+            , CustomResponseCode.INVALID_PARAMETER_ERROR
+            , CustomResponseCode.INVALID_TOKEN_ERROR
+            , CustomResponseCode.DB_ERROR
+            , CustomResponseCode.SYSTEM_ERROR
+    })
     // @PathVariable: URL Path의 일부를 {변수}로 서버에서 추출해서 사용
     @GetMapping("/posts/{id}")
     public ResponseEntity<GlobalRes<PostWithUserRes>> show(
