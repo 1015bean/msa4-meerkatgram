@@ -35,18 +35,20 @@ public class PostController {
     @ApiNotValidErrorResponse
     @GetMapping("/posts")
     public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
-        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
-        PostIndexRes postIndexRes = postService.index(postIndexReq);
+        return ResponseEntity.ok(GlobalRes.success(postService.index(postIndexReq)));
 
-
-        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
-        return ResponseEntity.status(200).body(
-                GlobalRes.<PostIndexRes>builder()
-                        .code("00")
-                        .message("정상처리")
-                        .data(postIndexRes)
-                        .build()
-        );
+//        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
+//        PostIndexRes postIndexRes = postService.index(postIndexReq);
+//
+//
+//        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
+//        return ResponseEntity.status(200).body(
+//                GlobalRes.<PostIndexRes>builder()
+//                        .code("00")
+//                        .message("정상처리")
+//                        .data(postIndexRes)
+//                        .build()
+//        );
 
         // 요청DTO 객체와 매핑 잘 됐는지 점검
         // return String.format("page: %d, limit: %d", req.page(), req.limit());
@@ -57,14 +59,6 @@ public class PostController {
     public ResponseEntity<GlobalRes<PostWithUserRes>> show(
             @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
     ) {
-        PostWithUserRes result = postService.show(id);
-
-        return ResponseEntity.status(200).body(
-                GlobalRes.<PostWithUserRes>builder()
-                        .code("00")
-                        .message("게시글 상세 정상 처리")
-                        .data(result)
-                        .build()
-        );
+        return ResponseEntity.ok(GlobalRes.success(postService.show(id)));
     }
 }
