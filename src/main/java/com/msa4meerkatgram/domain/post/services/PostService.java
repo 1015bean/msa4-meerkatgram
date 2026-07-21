@@ -1,9 +1,11 @@
 package com.msa4meerkatgram.domain.post.services;
 
 import com.msa4meerkatgram.domain.post.entities.Post;
-import com.msa4meerkatgram.domain.post.mapper.PostMapper;
+import com.msa4meerkatgram.domain.post.repositories.PostQueryRepository;
+import com.msa4meerkatgram.domain.post.repositories.PostRepository;
 import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
-import com.msa4meerkatgram.domain.post.requests.PostIndexRes;
+import com.msa4meerkatgram.domain.post.response.PostIndexRes;
+import com.msa4meerkatgram.domain.post.response.PostWithUserRes;
 import com.msa4meerkatgram.global.errors.custom.DeletedRecordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -14,34 +16,40 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PostService {
-    private final PostMapper postMapper;
+    private final PostRepository postRepository;
+    private final PostQueryRepository postQueryRepository;
 
     public PostIndexRes index(PostIndexReq postIndexReq) {
 
-        // 특정 페이지의 게시글 조회: 맵퍼(쿼리문 작성)가 필요한 정보를 전달해줌
-        // 필요한 정보: page & offset
+        // offset
         int offset = (postIndexReq.page() - 1) * postIndexReq.limit();
-        List<Post> posts = postMapper.getPagination(postIndexReq.limit(), offset);
+
+        // 특정 페이지의 게시글 조회
+        List<Post> result = postQueryRepository.pagination(offset, postIndexReq.limit());
 
         // 토탈(모든 데이터) 획득
-        long total = postMapper.getTotal();
+        long total = postRepository.count();
         boolean lastPage = offset + postIndexReq.limit() >= total;
 
         // 위에서 획득한 데이터 컨트롤러에게 전달
-        return PostIndexRes.builder()
-                .total(total)
-                .lastPage(lastPage)
-                .posts(posts)
-                .build();
+        return PostIndexRes.from(total, lastPage, result);
     }
 
-    public Post show(long id) {
-        Post post = postMapper.findByPk(id);
+// ---------------------------------------------------------------------------------------------
+    // -------------------------------------- JPA ---------------------------------------
+    // 레포지토리.findById(id): Optional로 반환(반환값에 null 나올 수 있음, null처리 해줘야 함)
+    //.orElseThrow() : null익셉션 처리
+    public PostWithUserRes show(long id) {
+        Post result = postRepository.findById(id)
+                .orElseThrow(() -> new DeletedRecordException("이미 삭제한 게시글입니다."));
+    // -------------------------------------- JPA ---------------------------------------
 
-        if(post == null) {
-            throw new DeletedRecordException("이미 삭제한 게시글입니다.");
-        }
+    // -------------------------------------- Mybatis --------------------------------------
+    //     if(post == null) {
+    //         throw new DeletedRecordException("이미 삭제한 게시글입니다.");
+    //      }
+    // -------------------------------------- Mybatis ---------------------------------------
 
-        return post;
+        return PostWithUserRes.from(result);
     }
 }

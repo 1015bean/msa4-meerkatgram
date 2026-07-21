@@ -1,10 +1,15 @@
 package com.msa4meerkatgram.domain.post.controllers;
 
-import com.msa4meerkatgram.domain.post.entities.Post;
 import com.msa4meerkatgram.domain.post.requests.PostIndexReq;
-import com.msa4meerkatgram.domain.post.requests.PostIndexRes;
+import com.msa4meerkatgram.domain.post.response.PostIndexRes;
+import com.msa4meerkatgram.domain.post.response.PostWithUserRes;
 import com.msa4meerkatgram.domain.post.services.PostService;
+import com.msa4meerkatgram.global.config.openapi.CustomApiResponse;
 import com.msa4meerkatgram.global.responses.GlobalRes;
+import com.msa4meerkatgram.global.responses.constant.CustomResponseCode;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,44 +25,53 @@ import org.springframework.web.bind.annotation.RestController;
     // 세그먼트 파라미터: url의 path를 데이터 변수로 사용. 많은 데이터에는 부적합
     // JSON: 대량의 복잡한 데이터
     // 쿼리 파라미터: URL에 데이터 노출
+@Tag(name = "게시글API", description = "게시글 관련")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api")
 public class PostController {
     private final PostService postService;
 
+    @Operation(summary = "개사글 목록 출력 가능")
+    @CustomApiResponse(value = {
+            CustomResponseCode.INVALID_PARAMETER_ERROR
+            , CustomResponseCode.DB_ERROR
+            , CustomResponseCode.SYSTEM_ERROR
+    })
     @GetMapping("/posts")
     public ResponseEntity<GlobalRes<PostIndexRes>> index(PostIndexReq postIndexReq) {
-        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
-        PostIndexRes postIndexRes = postService.index(postIndexReq);
+        return ResponseEntity.ok(GlobalRes.success(postService.index(postIndexReq)));
 
-
-        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
-        return ResponseEntity.status(200).body(
-                GlobalRes.<PostIndexRes>builder()
-                        .code("00")
-                        .message("정상처리")
-                        .data(postIndexRes)
-                        .build()
-        );
+//        // Service에서 작성한 서비스메소드의 데이터를 객체에 담기
+//        PostIndexRes postIndexRes = postService.index(postIndexReq);
+//
+//
+//        // 레스폰스 엔티티의 body에 "미리 만들어둔 레스폰스 객체를 담아" 반환하도록 함
+//        return ResponseEntity.status(200).body(
+//                GlobalRes.<PostIndexRes>builder()
+//                        .code("00")
+//                        .message("정상처리")
+//                        .data(postIndexRes)
+//                        .build()
+//        );
 
         // 요청DTO 객체와 매핑 잘 됐는지 점검
         // return String.format("page: %d, limit: %d", req.page(), req.limit());
     }
 
+    @Operation(summary = "개사글 목록 출력 가능")
+    @CustomApiResponse(value = {
+            CustomResponseCode.UNAUTHENTICATED_ERROR
+            , CustomResponseCode.INVALID_PARAMETER_ERROR
+            , CustomResponseCode.INVALID_TOKEN_ERROR
+            , CustomResponseCode.DB_ERROR
+            , CustomResponseCode.SYSTEM_ERROR
+    })
     // @PathVariable: URL Path의 일부를 {변수}로 서버에서 추출해서 사용
     @GetMapping("/posts/{id}")
-    public ResponseEntity<GlobalRes<Post>> show(
-            @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
+    public ResponseEntity<GlobalRes<PostWithUserRes>> show(
+            @Parameter(description = "게시글 번호", example = "1") @Min(value = 1, message = "1 이상 숫자만 허용합니다.") @PathVariable long id
     ) {
-        Post result = postService.show(id);
-
-        return ResponseEntity.status(200).body(
-                GlobalRes.<Post>builder()
-                        .code("00")
-                        .message("게시글 상세 정상 처리")
-                        .data(result)
-                        .build()
-        );
+        return ResponseEntity.ok(GlobalRes.success(postService.show(id)));
     }
 }

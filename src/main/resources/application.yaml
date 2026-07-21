@@ -1,0 +1,132 @@
+spring:
+  application:
+    name: msa4-meerkatgram
+    version: v1
+  web:
+    error:
+      include-stacktrace: always
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 20MB
+
+  # DB
+  datasource:
+    url: jdbc:mysql://${DB_HOST:localhost}:${DB_PORT:3306}/${DB_NAME:meerkatgram}
+    username: ${DB_USER:root}
+    password: ${DB_PASSWORD:msa505}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 커넥션 풀 설정
+    # : DB 접속할 때 사용하는 연결-커넥션을 생성해두고 필요할 때 빌려쓰는 것
+    hikari:
+      maximum-pool-size: 10
+      connection-timeout: 30000
+
+  # JPA
+  # : hibernate 기반으로 작동
+  jpa:
+    hibernate:
+      # 서버를 재시작 할 때, DB 스키마를 어떻게 관리할지 설정
+      # none이외의 설정 값을 사용 시에, DB 스키마가 초기화되거나 수정되므로 요주의
+      # 설정 값:
+        # none: 스카마 자동 비활성화
+        # update: 기존 테이블을 유지하며 변경사항만 업데이트
+        # create: 애플리케이션 실행 시 테이블 생성(기존 데이터 삭제)
+        # create-drop: 애플리케이션 종료 시 테이블 삭제
+        # validate: 기존 테이블의 구조를 검증하고, 일치하지 않으면 예외 발생
+      ddl-auto: none
+    # 실행되는 SQL을 콘솔에 출력 여부
+    show-sql: true
+    properties:
+      hibernate:
+        # SQL을 보기 좋게 포멧하여 출력
+        format_sql: true
+    # 데이터 소스 초기화 지연 설정
+      # true으로 설정 시, spring 컨텍스트가 완전히 로드된 후에 어플리케이션의 Datasource 초기화(스키마를 먼저 만들고 더미 데이터를 넣도록)
+    defer-datasource-initialization: true
+  sql:
+    init:
+      # DB초기화 파일의 위치 설정
+      data-locations: classpath*:dummy/*.sql
+      # DB초기화 파일이 실행될 시점을 설정
+        # embedded: 내장 DB일 때만 초기화 실행
+        # always: 모든 DB에서 초기화 실행
+        # never: 초기화하지 않음
+      mode: never
+      # 사용할 DB 플랫폼 설정
+        # all
+        # h2, MySQL등 : 특정 데이터베이스에만 초기화파일을 실행
+      platform: all
+
+server:
+  error:
+    include-stacktrace: always
+    include-message: always
+
+## MyBatis
+#mybatis:
+#  mapper-locations: classpath:mapper/**/*Mapper.xml
+#  type-aliases-package: com.msa4meerkatgram
+
+# Swagger
+springdoc:
+  # 클라이언트가 서버로 데이터를 보낼 때의 기본 형식을 지정하는 속성
+  default-consumes-media-type: application/json
+  # 서버가 클라이언트로 데이터를 보낼 때의 기본 형식을 지정하는 속성
+  default-produces-media-type: application/json
+  swagger-ui:
+    # Swagger 'UI' 접속 경로 설정(클라이언트가 브라우저에 입력해 들어가는 path)
+    path: /swagger-ui.html  # EX) http://localhost:8080/swagger-ui.html
+    # API 정렬 기준(alpha: 알파벳순 정렬)
+    operations-sorter: alpha
+  api-docs:
+    # OpenAPI 스펙을 JSON파일로 확인할 수 있는 경로
+    path: /api-docs
+
+# Log
+logging:
+  file:
+    # 로그 파일 경로
+    name: logs/error.log
+  level:
+    # 로그 출력 레벨 설정(trace, debug, info, warn, error)
+    root: info
+
+    # 특정 패키지만 로그 출력 레벨 설정
+    com.msa4meerkatgram.controllers: debug
+    com.msa4meerkatgram.global.errors: debug
+
+# Security & JWT
+security:
+  jwt:
+    secure: false
+    issuer: meerkat@meerkat.kr
+    type: JWT
+    access-token-expiry: 1000000
+    refresh-token-expiry: 1296000000
+    refresh-token-cookie-name: refresh-token
+    refresh-token-cookie-expiry: 1296000
+    secret: w4e5gwe57nhwb456g3h46g34of6h9439f5h8o7os5789hflsg645eh74s57he54g734
+    header-key: Authorization
+    scheme: Bearer
+    reiss-uri: /api/reissue-token
+
+# config
+file:
+  server-uri: http://localhost:8080
+  storage-path: E:/poke/workspace/msa4-meerkatgram/storage
+  profile-path: /files/profiles
+  post-path: /files/posts
+  allow-extension-list: [
+    "image/jpg",
+    "image/jpeg",
+    "image/png",
+    "image/gif",
+    "image/svg",
+    "image/webp"
+  ]
+
+cors:
+  allowed-origins: ["http://localhost:5173"]
+  max-age: 3600
