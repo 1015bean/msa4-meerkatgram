@@ -35,7 +35,7 @@ public class SecurityConfiguration {
         return new BCryptPasswordEncoder();
     }
 
-    // 크로스도메인 허용 설정
+    // 크로스도메인 허용 설정(cors 처리)
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -84,7 +84,7 @@ public class SecurityConfiguration {
                 .formLogin(AbstractHttpConfigurer::disable) // 폼로그인 기능 비활성 설정
                 .csrf(AbstractHttpConfigurer::disable) // csrf 토큰인증 비활성 설정
                 .cors(cors -> cors.configurationSource(this.corsConfigurationSource())) // CORS 설정(크로스도메인 허용) 추가
-                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 작선한 필터 등록(내가 만든 jwt필터 먼저 실행, 기본제공 필터 실행)
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class) // 작성한 필터 등록(내가 만든 jwt필터, 커스텀 필터에 대한 정보(커스텀 필터에서 사용해야 하므로 미리 생성, 이 객체 생성하고 커스텀 필터 실행))
                 .authorizeHttpRequests(req ->
                         // 리퀘스트에 대한 권한 설정(이 패턴의 url(블랙리스트)은 인증이 필요하다)
                         req.requestMatchers(HttpMethod.GET, SecurityUrlRegistry.AUTH_REQUIRED_GET_URLS).authenticated()

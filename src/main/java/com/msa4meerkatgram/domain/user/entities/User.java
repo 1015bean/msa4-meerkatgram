@@ -51,7 +51,7 @@ public class User {
     @Column(name = "profile", nullable = false, length = 100)
     private String profile;
 
-    @Column(name = "refreshToken", nullable = true, length = 255)
+    @Column(name = "refresh_token", nullable = true, length = 255)
     private String refreshToken;
 
     @CreatedDate  // 생성 시 자동으로 시간 입력
@@ -62,6 +62,6 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "deleted_at", nullable = false)
+    @Column(name = "deleted_at", nullable = true)
     private LocalDateTime deletedAt;
 }

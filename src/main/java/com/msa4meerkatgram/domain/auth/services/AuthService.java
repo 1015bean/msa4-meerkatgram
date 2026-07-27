@@ -131,7 +131,7 @@ public class AuthService {
 // ---------------------------------------------- JPA ---------------------------------------------------------------
 
         // 리프레시 토큰을 쿠키에 저장
-        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.reissUri());
+        cookieManager.setCookie(response, jwtConfig.refreshTokenCookieName(), newRefreshToken, jwtConfig.refreshTokenCookieExpiry(), jwtConfig.reissueUri());
 
 // ---------------------------------------------- Mybatis ----------------------------------------------------------------
         // 리턴
@@ -174,7 +174,7 @@ public class AuthService {
                 ,jwtConfig.refreshTokenCookieName()
                 ,null
                 ,0
-                ,jwtConfig.reissUri()
+                ,jwtConfig.reissueUri()
         );
     }
 
